@@ -1,2 +1,3 @@
+.rvmrc
 log/*.log
 pids/*.pid
