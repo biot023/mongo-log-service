@@ -29,4 +29,9 @@ OptionParser.new do |op|
 end
   .parse!
 
-LogService.new( conn, db, name, size, processor_descs ).run
+LogService.new( opts[:conn],
+                opts[:db],
+                opts[:name],
+                opts[:size],
+                opts[:processor_descs] )
+  .run
