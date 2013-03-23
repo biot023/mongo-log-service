@@ -2,8 +2,9 @@ require "optparse"
 require_relative "../lib/log_service"
 
 opts = {
-  :conn => "mongodb://localhost",
-  :size => 16777216
+  :conn            => "mongodb://localhost",
+  :size            => 16777216,
+  :processor_descs => []
 }
 
 OptionParser.new do |op|
@@ -28,4 +29,4 @@ OptionParser.new do |op|
 end
   .parse!
 
-LogService.new( conn, db, name, size ).run
+LogService.new( conn, db, name, size, processor_descs ).run
