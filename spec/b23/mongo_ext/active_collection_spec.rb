@@ -237,5 +237,87 @@ describe B23::MongoExt::ActiveCollection do
       end
     end
   end
+
+  describe "getting the collection" do
+    subject { coll.collection }
+
+    context "when there is no memoised collection" do
+      let( :db )         { mock }
+      let( :collection ) { mock }
+
+      before do
+        coll.stub( :db ).and_return( db )
+        db.stub( :collection ).and_return( collection )
+      end
+
+      it "should get the db" do
+        coll.should_receive( :db )
+        subject
+      end
+
+      it "should get the collection by name from the db" do
+        db.should_receive( :collection ).with( name )
+        subject
+      end
+
+      it "should return the collection" do
+        subject.should == collection
+      end
+
+      it "should memoise the collection" do
+        expect { subject }.to change { coll.instance_eval { @collection } }.to( collection )
+      end
+    end
+
+    context "when there is a memoised collection, but the client is no longer active" do
+      let( :client )         { mock( :active? => false ) }
+      let( :old_collection ) { mock }
+      let( :db )             { mock }
+      let( :new_collection ) { mock }
+
+      before do
+        coll.instance_variable_set( :@client, client )
+        coll.instance_variable_set( :@collection, old_collection )
+        coll.stub( :db ).and_return( db )
+        db.stub( :collection ).and_return( new_collection )
+      end
+
+      it "should get the db" do
+        coll.should_receive( :db )
+        subject
+      end
+
+      it "should get the collection by name from the db" do
+        db.should_receive( :collection ).with( name )
+        subject
+      end
+
+      it "should return the collection" do
+        subject.should == new_collection
+      end
+
+      it "should memoise the collection" do
+        expect { subject }.to change { coll.instance_eval { @collection } }.to( new_collection )
+      end
+    end
+
+    context "when there is a memoised collection, and the client is still active" do
+      let( :client )     { mock( :active? => true ) }
+      let( :collection ) { mock }
+
+      before do
+        coll.instance_variable_set( :@client, client )
+        coll.instance_variable_set( :@collection, collection )
+      end
+
+      it "should return the memoised collection" do
+        subject.should == collection
+      end
+
+      it "should preserve the memoised collection" do
+        expect { subject }.to_not change { coll.instance_eval { @collection } }.from( collection )
+      end
+    end
+  end
   
 end

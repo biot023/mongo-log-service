@@ -27,6 +27,11 @@ module B23
         @db = client.db( dbname ) if ! @db || ! @client.active?
         @db
       end
+
+      def collection
+        @collection = db.collection( name ) if ! @collection || ! @client.active?
+        @collection
+      end
     end
     
   end
