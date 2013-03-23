@@ -11,15 +11,18 @@ module Services
       begin
         if cursor.has_next?
           doc = cursor.next
+# TODO -- delete next line
           File.open( "log/test.log", "w+" ) { |f| f << doc.inspect << " " }
           output_collection.collection.insert( _process( doc ) )
           input_collection.collection.update( { :_id => doc["_id"] },
                                               { :$unset => { :message => true } } )
         else
+# TODO -- delete next line
           File.open( "log/test.log", "w+" ) { |f| f << "Tick. " }
           sleep( 0.25 )
         end
       end while infinite
+# TODO -- delete next line
       raise( "******** I should never get here ********" ) if infinite
     end
 
