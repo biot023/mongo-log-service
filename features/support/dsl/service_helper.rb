@@ -1,3 +1,5 @@
+require "fileutils"
+
 module ServiceHelper
 
   class Service
@@ -15,6 +17,7 @@ module ServiceHelper
       end
       puts @cmd
       @process = IO.popen( @cmd )
+      FileUtils.touch( "pids/#{ @process.pid }.pid" )
     end
 
     class << self
@@ -32,6 +35,7 @@ module ServiceHelper
 
       def stop
         if @_service
+          FileUtils.rm_f( "pids/#{ @process.pid }.pid" )
           `kill -9 #{ @_service.process.pid }`
           @_service = nil
         end
@@ -39,7 +43,7 @@ module ServiceHelper
     end
   end
 
-  def run_service( opts={}, name="cuke-entries", db="log-service-cuke" )
+  def run_service( opts={}, name=SERVICE_NAME, db=SERVICE_DB )
     Service.run( db, name, opts )
   end
 
@@ -56,4 +60,12 @@ World( ServiceHelper )
 
 After do
   stop_service
+end
+
+at_exit do
+  Dir.glob( "pids/*.pid" ).each do |fname|
+    fname =~ /^pids\/(\d+)\.pid$/
+    `kill -9 #{ $1 }`
+    FileUtils.rm_f( fname )
+  end
 end

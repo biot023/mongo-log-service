@@ -8,14 +8,11 @@ module B23
 
       def initialize( *args )
         if args.first.is_a?( ActiveCollection )
-          @connstr, @dbname, @client, @db =
-            args.first.connstr, args.first.dbname, args.first.client, args.first.db
-          @name = args[1]
-          create_options = args[2]
+          @connstr, @dbname, @client, @db, @name =
+            args.first.connstr, args.first.dbname, args.first.client, args.first.db, args[1]
         else
-          @connstr, @dbname, @name, create_options = *args
+          @connstr, @dbname, @name = *args
         end
-        db.create_collection( name, create_options ) if create_options
       end
 
       def client

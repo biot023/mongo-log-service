@@ -8,6 +8,25 @@ Feature: Logging
     Given a simple logging service is running
     When I send log events to the service
     Then I should see processed records in the database
-    And the records should have a generated time value
-    And the records should have their original origin value
+    And the records should have their original miscellaneous values
     And the records should have their original message value
+
+  @log @time
+  Scenario: Logging events with a time processor
+    Given Pending
+
+  @log @unlabelled @hash
+  Scenario: Logging events with a hashes processor
+    Given Pending
+
+  @log @labelled @hash
+  Scenario: Logging events with a labelled hash processor
+    Given Pending
+
+  @log @sql
+  Scenario: Logging events with a SQL processor
+    Given Pending
+
+  @log @email
+  Scenario: Logging events with an email processor
+    Given Pending

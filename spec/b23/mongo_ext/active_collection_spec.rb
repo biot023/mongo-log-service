@@ -3,7 +3,7 @@ require "b23/mongo_ext/active_collection"
 
 describe B23::MongoExt::ActiveCollection, "construction" do
   
-  describe "with basic params and no options" do
+  describe "with basic params" do
     let( :connstr ) { "mongodb://localhost" }
     let( :dbname )  { "the-db" }
     let( :name )    { "my_name" }
@@ -14,30 +14,7 @@ describe B23::MongoExt::ActiveCollection, "construction" do
     its( :name )    { should == name }
   end
 
-  describe "with basic params and options" do
-    let( :connstr )        { "mongodb://localhost" }
-    let( :dbname )         { "the-db" }
-    let( :name )           { "my_name" }
-    let( :create_options ) { { :create => "options" } }
-    subject { described_class.new( connstr, dbname, name, create_options ) }
-    let( :db ) { mock }
-
-    before do
-      Mongo::MongoClient.stub_chain( :from_uri, :db ).and_return( db )
-      db.stub( :create_collection )
-    end
-
-    its( :connstr ) { should == connstr }
-    its( :dbname )  { should == dbname }
-    its( :name )    { should == name }
-
-    it "should create the collection with create options" do
-      db.should_receive( :create_collection ).with( name, create_options )
-      subject
-    end
-  end
-
-  describe "with another active collection and no options" do
+  describe "with another active collection" do
     let( :other ) do
       mock( :is_a?   => true,
             :connstr => "mongodb://otherhost",
@@ -53,35 +30,6 @@ describe B23::MongoExt::ActiveCollection, "construction" do
     its( :name )    { should == name }
     its( :client )  { should == other.client }
     its( :db )      { should == other.db }
-  end
-
-  describe "with another active collection and options" do
-    let( :db ) { mock }
-    let( :other ) do
-      mock( :is_a?   => true,
-            :connstr => "mongodb://otherhost",
-            :dbname  => "other-db",
-            :client  => mock( :active? => true ),
-            :db      => db )
-    end
-    let( :name )           { "my_name" }
-    let( :create_options ) { { :creation => "options" } }
-    subject { described_class.new( other, name, create_options ) }
-
-    before do
-      db.stub( :create_collection )
-    end
-
-    its( :connstr ) { should == other.connstr }
-    its( :dbname )  { should == other.dbname }
-    its( :name )    { should == name }
-    its( :client )  { should == other.client }
-    its( :db )      { should == other.db }
-
-    it "should create the collection with create options" do
-      db.should_receive( :create_collection ).with( name, create_options )
-      subject
-    end
   end
   
 end

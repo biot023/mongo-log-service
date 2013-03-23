@@ -64,7 +64,7 @@ describe LogService do
 
     it "should create and return a capped active collection for input name" do
       B23::MongoExt::ActiveCollection.should_receive( :new )
-        .with( conn, db, "input_#{ name }", :capped => true, :size => size )
+        .with( conn, db, "input_#{ name }" )
         .and_return( coll = mock )
       subject.should == coll
     end

@@ -14,13 +14,11 @@ class LogService < Struct.new( :conn, :db, :name, :size, :processor_descs )
   private
 
   def _input_collection
-    B23::MongoExt::ActiveCollection
-      .new( conn, db, "input_#{ name }", :capped => true, :size => size )
+    @_icoll ||= B23::MongoExt::ActiveCollection.new( conn, db, "input_#{ name }" )
   end
 
   def _output_collection
-    B23::MongoExt::ActiveCollection
-      .new( _input_collection, name )
+    @_ocoll ||= B23::MongoExt::ActiveCollection.new( _input_collection, name )
   end
 
   def _processors

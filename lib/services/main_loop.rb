@@ -5,15 +5,22 @@ module Services
   class MainLoop < Struct.new( :input_collection, :output_collection, :processors )
 
     def run( infinite=true )
-      cursor = Mongo::Cursor.new( input_collection.collection, :tailable => true )
+      cursor = input_collection.collection.find( :message => { :$exists => true } )
+      cursor.add_option( 1 )
+      cursor.add_option( 5 )
       begin
-        doc = cursor.next
-        if doc
+        if cursor.has_next?
+          doc = cursor.next
+          File.open( "log/test.log", "w+" ) { |f| f << doc.inspect << " " }
           output_collection.collection.insert( _process( doc ) )
+          input_collection.collection.update( { :_id => doc["_id"] },
+                                              { :$unset => { :message => true } } )
         else
+          File.open( "log/test.log", "w+" ) { |f| f << "Tick. " }
           sleep( 0.25 )
         end
       end while infinite
+      raise( "******** I should never get here ********" ) if infinite
     end
 
     private
