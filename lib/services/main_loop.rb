@@ -6,8 +6,8 @@ module Services
 
     def run( infinite=true )
       cursor = input_collection.collection.find( :message => { :$exists => true } )
-      cursor.add_option( 1 )
-      cursor.add_option( 5 )
+      cursor.add_option( 2 )
+      cursor.add_option( 32 )
       begin
         if cursor.has_next?
           doc = cursor.next
