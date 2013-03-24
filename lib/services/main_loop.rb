@@ -6,11 +6,11 @@ module Services
 
     def run( infinite=true )
       begin
-        doc = input_collection.collection.find_one( "message" => { :$exists => true } )
+        doc = input_collection.find_one( "message" => { :$exists => true } )
         if doc
-          output_collection.collection.insert( _process( doc ) )
-          input_collection.collection.update( { "_id" => doc["_id"] },
-                                              { :$unset => { "message" => true } } )
+          output_collection.insert( _process( doc ) )
+          input_collection.update( { "_id" => doc["_id"] },
+                                   { :$unset => { "message" => true } } )
         else
           sleep( 0.25 )
         end

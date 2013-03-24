@@ -20,14 +20,14 @@ describe Services::MainLoop do
     subject { service.run( false ) }
 
     before do
-      input_collection.collection.stub( :find_one ).and_return( input_doc )
+      input_collection.stub( :find_one ).and_return( input_doc )
       service.stub( :_process ).and_return( processed_doc )
-      output_collection.collection.stub( :insert )
-      input_collection.collection.stub( :update )
+      output_collection.stub( :insert )
+      input_collection.stub( :update )
     end
 
     it "should find the first input doc with a message" do
-      input_collection.collection.should_receive( :find_one )
+      input_collection.should_receive( :find_one )
         .with( "message" => { :$exists => true } )
       subject
     end
@@ -38,12 +38,12 @@ describe Services::MainLoop do
     end
 
     it "should insert the processed doc to the output collection" do
-      output_collection.collection.should_receive( :insert ).with( processed_doc )
+      output_collection.should_receive( :insert ).with( processed_doc )
       subject
     end
 
     it "should unset the message field from the input doc" do
-      input_collection.collection.should_receive( :update )
+      input_collection.should_receive( :update )
         .with( { "_id" => input_doc["_id"] }, { :$unset => { "message" => true } } )
       subject
     end
