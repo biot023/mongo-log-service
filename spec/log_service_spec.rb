@@ -96,14 +96,16 @@ describe LogService do
   end
 
   describe "getting the processors" do
-    let( :processors ) { processor_descs.map { mock } }
+    let( :time_processor ) { mock }
+    let( :processors )     { processor_descs.map { mock } }
     subject { service.send( :_processors ) }
 
-    it "should generate and return a collection of processors for descs" do
+    it "should generate and return a collection of processors for descs, with time processor" do
+      Services::Processor::Time.should_receive( :new ).and_return( time_processor )
       [ processor_descs, processors ].transpose.each do |(desc, processor)|
         Services::Processor.should_receive( :for ).with( desc ).and_return( processor )
       end
-      subject.should == processors
+      subject.should == [ time_processor ] + processors
     end
   end
   

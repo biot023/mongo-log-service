@@ -22,6 +22,7 @@ class LogService < Struct.new( :conn, :db, :name, :size, :processor_descs )
   end
 
   def _processors
-    processor_descs.map { |desc| Services::Processor.for( desc ) }
+    [ Services::Processor::Time.new ] +
+      processor_descs.map { |desc| Services::Processor.for( desc ) }
   end
 end
