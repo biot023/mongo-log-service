@@ -2,6 +2,10 @@ Given( /^a simple logging service is running$/ ) do
   run_service
 end
 
+Given( /^a logging service with a hashes processor$/ ) do
+  run_service( :hashes_processor )
+end
+
 When( /^I send log events to the service$/ ) do
   @sent, @processed = send_log_events
 end

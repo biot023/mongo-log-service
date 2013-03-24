@@ -2,7 +2,7 @@ Feature: Logging
   I want to be able to send log entries to the service
   And see them processed to structured records
   And be able to configure further smart processing on different kinds of records
-@wip
+
   @log @simple
   Scenario: Logging simple events
     Given a simple logging service is running
@@ -12,10 +12,16 @@ Feature: Logging
     And the records should have their original message value
     And records with time values keep the originals
     And records without time values get given them
-
+@wip
   @log @unlabelled @hash
   Scenario: Logging events with a hashes processor
-    Given Pending
+    Given a logging service with a hashes processor
+    When I send log events to the service
+    Then I should see processed records in the database
+    And all records should have time values
+    And the records should have their original miscellaneous values
+    And the records should have their hash values extracted to a sub-hash
+    And the extracted hashes should no longer be in the records' messages
 
   @log @labelled @hash
   Scenario: Logging events with a labelled hash processor

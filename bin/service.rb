@@ -26,6 +26,10 @@ OptionParser.new do |op|
          "The size of the input buffer table in bytes" ) do |val|
     opts[:size] = val
   end
+  op.on( "--hashes-processor",
+         "Indicate that we want to use a hashes processor" ) do |val|
+    opts[:processor_descs] << :hashes
+  end
 end
   .parse!
 

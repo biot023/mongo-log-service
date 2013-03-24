@@ -8,11 +8,11 @@ module ServiceHelper
     def initialize( db, name, opts )
       @db, @name, @opts = db, name, opts
       @cmd = "bundle exec ruby bin/service.rb --db #{ @db } --name #{ @name }"
-      opts.each do |key, value|
-        case key
-        when :bollocks then puts "Stop swearing"
+      opts.each do |opt|
+        if opt.is_a?( Hash )
+          @cmd += " --#{ opt.keys.first.to_s.gsub( "_", "-" ) } #{ opt.values.first.inspect }"
         else
-          raise( "Unhandled option #{ key.inspect } : #{ value.inspect }" )
+          @cmd += " --#{ opt.to_s.gsub( "_", "-" ) }"
         end
       end
       puts @cmd
@@ -43,8 +43,8 @@ module ServiceHelper
     end
   end
 
-  def run_service( opts={}, name=SERVICE_NAME, db=SERVICE_DB )
-    Service.run( db, name, opts )
+  def run_service( *opts )
+    Service.run( SERVICE_DB, SERVICE_NAME, opts )
   end
 
   def stop_service
