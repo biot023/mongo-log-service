@@ -14,36 +14,37 @@ describe Services::MainLoop do
     its( :processors )        { should == processors }
   end
 
-  describe "running the main loop" do
-    let( :cursor )    { mock }
-    let( :doc )       { mock }
-    let( :processed ) { mock }
+  describe "running the main loop for one iteration" do
+    let( :input_doc )     { { "_id" => "abc123" } }
+    let( :processed_doc ) { mock }
     subject { service.run( false ) }
 
     before do
-      Mongo::Cursor.stub( :new ).and_return( cursor )
-      cursor.stub( :next ).and_return( doc )
-      service.stub( :_process ).and_return( processed )
+      input_collection.collection.stub( :find_one ).and_return( input_doc )
+      service.stub( :_process ).and_return( processed_doc )
       output_collection.collection.stub( :insert )
+      input_collection.collection.stub( :update )
     end
 
-    it "should create a tailable cursor with input collection's collection" do
-      Mongo::Cursor.should_receive( :new ).with( input_collection.collection, :tailable => true )
+    it "should find the first input doc with a message" do
+      input_collection.collection.should_receive( :find_one )
+        .with( "message" => { :$exists => true } )
       subject
     end
 
-    it "should try to get the next document from the tailable cursor" do
-      cursor.should_receive( :next )
+    it "should process the input doc" do
+      service.should_receive( :_process ).with( input_doc )
       subject
     end
 
-    it "should process the document retrieved from the cursor" do
-      service.should_receive( :_process ).with( doc )
+    it "should insert the processed doc to the output collection" do
+      output_collection.collection.should_receive( :insert ).with( processed_doc )
       subject
     end
 
-    it "should insert the processed document into the output collection's collection" do
-      output_collection.collection.should_receive( :insert ).with( processed )
+    it "should unset the message field from the input doc" do
+      input_collection.collection.should_receive( :update )
+        .with( { "_id" => input_doc["_id"] }, { :$unset => { "message" => true } } )
       subject
     end
   end

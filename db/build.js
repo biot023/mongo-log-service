@@ -1,8 +1,8 @@
-// mongo <dbname> --eval "var name='server_events', size=1048567, ttl=604800" build.js
+// mongo <dbname> --eval "var name='cuke_entries', size=1024, ttl=86400" build.js
 
 var localName = typeof name === 'undefined' ? "events" : name;
-var localSize = typeof size === 'undefined' ? 16777216 : size;
-var localTtl = typeof ttl === 'undefined' ? 1209600 : ttl;
+var localSize = typeof size === 'undefined' ? 16384 : size;
+var localTtl = typeof ttl === 'undefined' ? 604800 : ttl;
 var inputName = "input_" + localName;
 
 print( "Dropping and creating the input collection \"" + inputName + "\" ..." );

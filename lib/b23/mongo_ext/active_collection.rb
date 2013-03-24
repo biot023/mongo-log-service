@@ -1,9 +1,10 @@
+require "delegate"
 require "mongo"
 
 module B23
   module MongoExt
 
-    class ActiveCollection
+    class ActiveCollection < SimpleDelegator
       attr_reader :connstr, :dbname, :name
 
       def initialize( *args )
@@ -29,6 +30,7 @@ module B23
         @collection = db.collection( name ) if ! @collection || ! @client.active?
         @collection
       end
+      alias_method( :__getobj__, :collection )
     end
     
   end

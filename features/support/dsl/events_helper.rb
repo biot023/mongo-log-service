@@ -10,8 +10,11 @@ module EventsHelper
   def send_log_events( data=DATA )
     initial_count = ocoll.collection.count
     subsequent_count = initial_count + data.size
-    sleep( 1 )
-    icoll.collection.insert( data )
+    pause_doc = data.shuffle.first
+    data.each do |doc|
+      sleep( 1 ) if doc == pause_doc
+      icoll.collection.insert( doc )
+    end
     tries = 0
     while ( ocoll.collection.count < subsequent_count ) do
       raise( "Timeout in send_log_events" ) if tries > 10
