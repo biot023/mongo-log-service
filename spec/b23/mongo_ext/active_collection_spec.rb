@@ -40,6 +40,17 @@ describe B23::MongoExt::ActiveCollection do
   let( :name )    { "trent_darbies" }
   let( :coll ) { described_class.new( connstr, dbname, name ) }
 
+  describe "delegation" do
+    specify { described_class.ancestors.should include( SimpleDelegator ) }
+    
+    it "should get the collection as the object to delegate to" do
+      obj = mock
+      coll.instance_variable_set( :@collection, obj )
+      coll.instance_variable_set( :@client, mock( :active? => true ) )
+      coll.__getobj__.should == obj
+    end
+  end
+
   describe "getting the client" do
     subject { coll.client }
 

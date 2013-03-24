@@ -10,10 +10,8 @@ Feature: Logging
     Then I should see processed records in the database
     And the records should have their original miscellaneous values
     And the records should have their original message value
-
-  @log @time
-  Scenario: Logging events with a time processor
-    Given Pending
+    And records with time values keep the originals
+    And records without time values get given them
 
   @log @unlabelled @hash
   Scenario: Logging events with a hashes processor

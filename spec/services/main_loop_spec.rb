@@ -2,8 +2,8 @@ require "bootstrap"
 require "services/main_loop"
 
 describe Services::MainLoop do
-  let( :input_collection )  { mock( :collection => mock ) }
-  let( :output_collection ) { mock( :collection => mock ) }
+  let( :input_collection )  { mock }
+  let( :output_collection ) { mock }
   let( :processors )        { [ mock, mock ] }
   let( :service ) { described_class.new( input_collection, output_collection, processors ) }
 
@@ -15,36 +15,44 @@ describe Services::MainLoop do
   end
 
   describe "running the main loop for one iteration" do
-    let( :input_doc )     { { "_id" => "abc123" } }
-    let( :processed_doc ) { mock }
+    let( :entries )           { [ { "_id" => "abc123" }, { "_id" => "def456" } ] }
+    let( :processed_entries ) { entries.map { mock } }
     subject { service.run( false ) }
 
     before do
-      input_collection.stub( :find_one ).and_return( input_doc )
-      service.stub( :_process ).and_return( processed_doc )
+      input_collection.stub( :find ).and_return( entries )
+      entries.stub( :next ).and_return( *( entries + [ nil ] ) )
+      service.stub( :_process ).and_return( *processed_entries )
       output_collection.stub( :insert )
       input_collection.stub( :update )
     end
 
-    it "should find the first input doc with a message" do
-      input_collection.should_receive( :find_one )
-        .with( "message" => { :$exists => true } )
+    it "should get any entries with messages to process from the input collection" do
+      input_collection.should_receive( :find ).with( "message" => { :$exists => true } )
       subject
     end
 
-    it "should process the input doc" do
-      service.should_receive( :_process ).with( input_doc )
+    it "should process each entry retrieved" do
+      [ entries, processed_entries ].transpose.each do |(entry, processed_entry)|
+        service.should_receive( :_process ).with( entry ).and_return( processed_entry )
+      end
       subject
     end
 
-    it "should insert the processed doc to the output collection" do
-      output_collection.should_receive( :insert ).with( processed_doc )
+    it "should insert the processed entries to the output collection" do
+      processed_entries.each do |processed_entry|
+        output_collection.should_receive( :insert ).with( processed_entry, :w => 0 )
+      end
       subject
     end
 
-    it "should unset the message field from the input doc" do
-      input_collection.should_receive( :update )
-        .with( { "_id" => input_doc["_id"] }, { :$unset => { "message" => true } } )
+    it "should remove the message from the input entries" do
+      entries.each do |entry|
+        input_collection.should_receive( :update )
+          .with( { "_id" => entry["_id"] },
+                 { :$unset => { "message" => true } },
+                 :w => 0 )
+      end
       subject
     end
   end
