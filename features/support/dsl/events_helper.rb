@@ -12,6 +12,8 @@ module EventsHelper
     initial_count = ocoll.count
     subsequent_count = initial_count + data.size
     pause_doc = data.shuffle.first
+    fail( "Already input documents in collection" ) if icoll.count > 0
+    fail( "Already output documents in collection" ) if ocoll.count > 0
     data.each do |doc|
       sleep( 1 ) if doc == pause_doc
       icoll.insert( doc.merge( "load_id" => load_id ) )

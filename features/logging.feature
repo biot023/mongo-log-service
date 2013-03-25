@@ -6,17 +6,23 @@ Feature: Logging
   @log @simple
   Scenario: Logging simple events
     Given a simple logging service is running
-    When I send log events to the service
+    When I send events to the service
     Then I should see processed records in the database
     And the records should have their original miscellaneous values
     And the records should have their original message value
-    And records with time values keep the originals
-    And records without time values get given them
+
+  @log @time
+  Scenario: Logging events with a time processor
+    Given a logging service with a time processor
+    When I send events to the service
+    Then I should see processed records in the database
+    And records with original time values should keep those
+    And records without original time values should be given them
 @wip
   @log @unlabelled @hash
   Scenario: Logging events with a hashes processor
     Given a logging service with a hashes processor
-    When I send log events to the service
+    When I send events to the service
     Then I should see processed records in the database
     And all records should have time values
     And the records should have their original miscellaneous values

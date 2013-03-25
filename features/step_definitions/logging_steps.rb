@@ -2,11 +2,15 @@ Given( /^a simple logging service is running$/ ) do
   run_service
 end
 
+Given( /^a logging service with a time processor$/ ) do
+  run_service( :time_processor )
+end
+
 Given( /^a logging service with a hashes processor$/ ) do
   run_service( :hashes_processor )
 end
 
-When( /^I send log events to the service$/ ) do
+When( /^I send events to the service$/ ) do
   @sent, @processed = send_log_events
 end
 
@@ -29,14 +33,14 @@ Then( /^the records should have their original message value$/ ) do
   end
 end
 
-Then( /^records with time values keep the originals$/ ) do
+Then( /^records with original time values should keep those$/ ) do
   [ @sent, @processed ].transpose.each do |odoc, tdoc|
     next if ! odoc["time"]
     tdoc["time"].strftime( "%Y%m%d%H%M%S" ).should == odoc["time"].strftime( "%Y%m%d%H%M%S" )
   end
 end
 
-Then(/^records without time values get given them$/) do
+Then( /^records without original time values should be given them$/ ) do
   [ @sent, @processed ].transpose.each do |odoc, tdoc|
     next if odoc["time"]
     tdoc.should have_key( "time" )

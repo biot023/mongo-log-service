@@ -3,7 +3,7 @@ require_relative "../lib/log_service"
 
 opts = {
   :conn            => "mongodb://localhost",
-  :size            => 16777216,
+  :size            => 1024,
   :processor_descs => []
 }
 
@@ -25,6 +25,10 @@ OptionParser.new do |op|
          Integer,
          "The size of the input buffer table in bytes" ) do |val|
     opts[:size] = val
+  end
+  op.on( "--time-processor",
+         "Indicate that we want to use a time processor" ) do |val|
+    opts[:processor_descs] << :time
   end
   op.on( "--hashes-processor",
          "Indicate that we want to use a hashes processor" ) do |val|
