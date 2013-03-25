@@ -9,15 +9,23 @@ var delName = "del_" + inputName;
 db.runCommand( { fsync: 1 } );
 
 print( "Dropping and creating the input collection \"" + inputName + "\" ..." );
-db[inputName].drop();
+var icoll = db[inputName];
+icoll.renameCollection( delName );
+db.runCommand( { fsync: 1 } );
+icoll.drop();
+db.runCommand( { fsync: 1 } );
 db.createCollection( inputName, { capped: true, size: localSize } );
+db.runCommand( { fsync: 1 } );
 
 print( "Dropping and creating the output collection \"" + localName + "\" ..." );
+db[localName].remove();
+db.runCommand( { fsync: 1 } );
 db[localName].drop();
+db.runCommand( { fsync: 1 } );
 db.createCollection( localName );
 var coll = db.getCollection( localName );
 coll.ensureIndex( { time: 1 }, { expireAfterSeconds: localTtl } );
 coll.ensureIndex( { origin: 1 } );
-
 db.runCommand( { fsync: 1 } );
+
 print( "Done." );

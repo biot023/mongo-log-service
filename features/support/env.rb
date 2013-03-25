@@ -15,7 +15,7 @@ end
 
 Before do
   icoll.client.drop_database( SERVICE_DB )
-  puts `mongo #{ SERVICE_DB } --eval "var name='#{ SERVICE_NAME }', size=1024, ttl=86400" db/build.js`
+  puts `mongo #{ SERVICE_DB } --eval "var name='#{ SERVICE_NAME }', size=1024, ttl=86400" db/reset.js`
   fail( "Existing input documents" ) if icoll.count > 0
   fail( "Existing output documents" ) if ocoll.count > 0
 end
