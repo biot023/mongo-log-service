@@ -38,6 +38,10 @@ OptionParser.new do |op|
          "Pulls out labelled hashes into a labelled sub-hash" ) do |val|
     opts[:processor_descs] << :labelled_hashes
   end
+  op.on( "--rails-controller-processor",
+         "Pulls out rails controller information into record" ) do |val|
+    opts[:processor_descs] << :rails_controller
+  end
 end
   .parse!
 

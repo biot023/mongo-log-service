@@ -14,6 +14,10 @@ Given(/^a logging service with a labelled hash processor$/) do
   run_service( :labelled_hashes_processor )
 end
 
+Given( /^a logging service with a rails controller processor$/ ) do
+  run_service( :rails_controller_processor )
+end
+
 When( /^I send events to the service$/ ) do
   @sent, @processed = send_log_events
 end
@@ -95,10 +99,52 @@ Then( /^the records should have their labelled hashes extracted to labelled sub\
     doc["two"].should == { "Hashes" => "Within" }
     doc["within"].should == { "my" => "message" }
   end
+  @processed[7].tap do |doc|
+    doc["parameters"].should == { "controller" => "sessions", "action" => "new" }
+  end
+  @processed[8].tap do |doc|
+    doc["parameters"].should == {
+      "controller" => "items",
+      "id"         => "999876-Rupcycled-Bangle-Red",
+      "action"     => "show"
+    }
+  end
 end
 
 Then( /^the extracted labelled hashes should no longer be in the records' messages$/ ) do
-  [ 1, 2, 4, 5, 6 ].each do |index|
+  [ 1, 2, 4, 5, 6, 7, 8 ].each do |index|
     @processed[index]["message"].should_not match( /:\{\}/ )
+  end
+end
+
+Then( /^the rails controller records should have their controllers in their own field$/ ) do
+  { 7 => "SessionsController", 8 => "ItemsController", 9 => "IpnsController"
+  }.each do |index, controller|
+    @processed[index]["controller"].should == controller
+    @processed[index]["message"].should_not match( /#{ controller }/ )
+  end
+end
+
+Then( /^the rails controller records should have their actions in their own field$/ ) do
+  { 7 => "new", 8 => "show", 9 => "paypal_ipn"
+  }.each do |index, action|
+    @processed[index]["action"].should == action
+    @processed[index]["message"].should_not match( /##{ action }/ )
+  end
+end
+
+Then( /^the rails controller records should have their HTTP verbs in their own field$/ ) do
+  { 7 => "GET", 8 => "GET", 9 => "POST"
+  }.each do |index, http_verb|
+    @processed[index]["http_verb"].should == http_verb
+    @processed[index]["message"].should_not match( /##{ http_verb }/ )
+  end
+end
+
+Then( /^the rails controller records should have their IP addresses in their own field$/ ) do
+  { 7 => "86.16.61.59", 8 => "157.56.92.147", 9 => "173.0.81.1"
+  }.each do |index, ip_address|
+    @processed[index]["ip_address"].should == ip_address
+    @processed[index]["message"].should_not match( /##{ ip_address }/ )
   end
 end
