@@ -4,7 +4,9 @@ module EventsHelper
            { "server" => "localhost", "level" => "warn", "time" => Time.now,
              "message" => " I Have: {\"some\"=>\"issues\"} for you" },
            { "server" => "remotehost", "level" => "warn",
-             "message" => "There are: {\"Nested\"=>{\"Issues\"=>{\"In\"=>\"Here\"}}}, y'all" }
+             "message" => "There are: {\"Nested\"=>{\"Issues\"=>{\"In\"=>\"Here\"}}}, y'all" },
+           { "server" => "donkeyhost", "level" => "debug",
+             "message" => "{\"Here\"=>\"are\"} hashes {\"for\"=>{\"1\"=>{\"2\"=>\"consider\"}}}" }
          ]
 
   def send_log_events( data=DATA )

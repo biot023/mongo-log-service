@@ -1,21 +1,38 @@
 require_relative "../../lib/b23/mongo_ext/active_collection"
 
-SERVICE_DB = "log_service_cuke"
-SERVICE_NAME = "cuke_entries"
+def service_dbname
+  @@service_dbname ||= "log_service_cuke"
+end
+
+def service_name
+  "cuke_entries"
+end
 
 def icoll
   B23::MongoExt::ActiveCollection.new( "mongodb://localhost",
-                                       SERVICE_DB, "input_#{ SERVICE_NAME }" )
+                                       service_dbname, "input_#{ service_name }" )
 end
 
 def ocoll
   B23::MongoExt::ActiveCollection.new( "mongodb://localhost",
-                                       SERVICE_DB, SERVICE_NAME )
+                                       service_dbname, service_name )
 end
 
 Before do
-  icoll.client.drop_database( SERVICE_DB )
-  puts `mongo #{ SERVICE_DB } --eval "var name='#{ SERVICE_NAME }', size=1024, ttl=86400" db/reset.js`
+  $instance ||= -1
+  $instance += 1
+  @@service_dbname = "log_service_cuke_#{ $instance }"
+  icoll.client.drop_database( service_dbname )
+  puts `mongo #{ service_dbname } --eval "var name='#{ service_name }', size=1024, ttl=86400" db/reset.js`
   fail( "Existing input documents" ) if icoll.count > 0
   fail( "Existing output documents" ) if ocoll.count > 0
+end
+
+at_exit do
+  client = Mongo::MongoClient.from_uri( "mongodb://localhost" )
+  ( $instance + 1 ).times do |i|
+    dbname = "log_service_cuke_#{ i }"
+    puts "Dropping database #{ dbname.inspect } ..."
+    puts client.drop_database( dbname )
+  end
 end

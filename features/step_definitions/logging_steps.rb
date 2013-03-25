@@ -47,3 +47,22 @@ Then( /^records without original time values should be given them$/ ) do
     tdoc["time"].should be > ( Time.now - 60 )
   end
 end
+
+Then( /^the records should have their hash values extracted to a sub\-hash$/ ) do
+  @processed[1].tap do |doc|
+    doc["some"].should == "issues"
+  end
+  @processed[2].tap do |doc|
+    doc["Nested"].should == { "Issues" => { "In" => "Here" } }
+  end
+  @processed[3].tap do |doc|
+    doc["Here"].should == "are"
+    doc["for"].should == { "1" => { "2" => "consider" } }
+  end
+end
+
+Then( /^the extracted hashes should no longer be in the records' messages$/ ) do
+  @processed.each do |doc|
+    doc["message"].should_not match( /\{|\}/ )
+  end
+end

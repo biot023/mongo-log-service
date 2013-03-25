@@ -44,7 +44,7 @@ module ServiceHelper
   end
 
   def run_service( *opts )
-    Service.run( SERVICE_DB, SERVICE_NAME, opts )
+    Service.run( service_dbname, service_name, opts )
   end
 
   def stop_service
