@@ -8,6 +8,7 @@ describe Services::Processor::Hashes do
     let( :input ) do
       [ { "document" => "without", "any" => "message" },
         { "document" => "with", "message" => "", "that's" => "empty" },
+        { "server" => "localhost", "level" => "obscure", "message" => "A blank hash {}" },
         { "server" => "localhost", "level" => "debug",
           "message" => "Fearful symmetry, my dear" },
         { "server" => "localhost", "level" => "warn",
@@ -21,6 +22,7 @@ describe Services::Processor::Hashes do
     let( :output ) do
       [ { "document" => "without", "any" => "message" },
         { "document" => "with", "message" => "", "that's" => "empty" },
+        { "server" => "localhost", "level" => "obscure", "message" => "A blank hash " },
         { "server" => "localhost", "level" => "debug",
           "message" => "Fearful symmetry, my dear" },
         { "server" => "localhost", "level" => "warn",

@@ -10,3 +10,8 @@ describe "generating a hashes processor" do
   subject { Services::Processor.for( :hashes ) }
   it { should be_a( Services::Processor::Hashes ) }
 end
+
+describe "generating a labelled hashes processor" do
+  subject { Services::Processor.for( :labelled_hashes ) }
+  it { should be_a( Services::Processor::LabelledHashes ) }
+end

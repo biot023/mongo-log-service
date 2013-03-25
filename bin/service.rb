@@ -27,12 +27,16 @@ OptionParser.new do |op|
     opts[:size] = val
   end
   op.on( "--time-processor",
-         "Indicate that we want to use a time processor" ) do |val|
+         "Add a creation time field to any records without one" ) do |val|
     opts[:processor_descs] << :time
   end
   op.on( "--hashes-processor",
-         "Indicate that we want to use a hashes processor" ) do |val|
+         "Pulls out key/value pairs into the body of the main document" ) do |val|
     opts[:processor_descs] << :hashes
+  end
+  op.on( "--labelled-hashes-processor",
+         "Pulls out labelled hashes into a labelled sub-hash" ) do |val|
+    opts[:processor_descs] << :labelled_hashes
   end
 end
   .parse!

@@ -32,7 +32,6 @@ at_exit do
   client = Mongo::MongoClient.from_uri( "mongodb://localhost" )
   ( $instance + 1 ).times do |i|
     dbname = "log_service_cuke_#{ i }"
-    puts "Dropping database #{ dbname.inspect } ..."
     puts client.drop_database( dbname )
   end
 end

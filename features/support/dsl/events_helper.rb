@@ -1,12 +1,18 @@
 module EventsHelper
-  DATA = [ { "server" => "localhost", "level" => "debug",
+  DATA = [ { "server" => "localhost", "level" => "debug", "type" => "Text",
              "message" => "Fearful symmetry, my dear" },
-           { "server" => "localhost", "level" => "warn", "time" => Time.now,
+           { "server" => "localhost", "level" => "warn", "time" => Time.now, "type" => "Labelled",
              "message" => " I Have: {\"some\"=>\"issues\"} for you" },
-           { "server" => "remotehost", "level" => "warn",
+           { "server" => "remotehost", "level" => "warn", "type" => "Labelled",
              "message" => "There are: {\"Nested\"=>{\"Issues\"=>{\"In\"=>\"Here\"}}}, y'all" },
-           { "server" => "donkeyhost", "level" => "debug",
-             "message" => "{\"Here\"=>\"are\"} hashes {\"for\"=>{\"1\"=>{\"2\"=>\"consider\"}}}" }
+           { "server" => "donkeyhost", "level" => "debug", "type" => "Unlabelled",
+             "message" => "{\"Here\"=>\"are\"} docs {\"for\"=>{\"1\"=>{\"2\"=>\"consider\"}}}" },
+           { "server" => "everywhere.com", "level" => "fatal", "type" => "Labelled",
+             "message" => "I really Hate: {\"Oblong\"=>\"Biscuits\"}" },
+           { "server" => "moon.org", "level" => "error", "type" => "Labelled",
+             "message" => "Disliking:{\"nested\"=>{\"hashes\"=>{\"On\"=>\"principle\"}}} food" },
+           { "server" => "sea.change", "level" => "debug", "type" => "Labelled",
+             "message" => "I hold two: {\"Hashes\"=>\"Within\"} within:{\"my\"=>\"message\"}." }
          ]
 
   def send_log_events( data=DATA )

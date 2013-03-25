@@ -1,5 +1,6 @@
 require_relative "processor/time"
 require_relative "processor/hashes"
+require_relative "processor/labelled_hashes"
 
 module Services
   module Processor
@@ -11,6 +12,8 @@ module Services
           Time.new
         when :hashes
           Hashes.new
+        when :labelled_hashes
+          LabelledHashes.new
         else
           raise( "Unhandled processor descriptor #{ desc.inspect }" )
         end
