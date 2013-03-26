@@ -1,22 +1,14 @@
 require_relative "processor/time"
 require_relative "processor/hashes"
 require_relative "processor/labelled_hashes"
+require_relative "processor/rails_controller"
 
 module Services
   module Processor
 
     class << self
       def for( desc )
-        case desc
-        when :time
-          Time.new
-        when :hashes
-          Hashes.new
-        when :labelled_hashes
-          LabelledHashes.new
-        else
-          raise( "Unhandled processor descriptor #{ desc.inspect }" )
-        end
+        const_get( desc.to_s.gsub( /(?:^|_)(.)/ ) { |m| $1.upcase } ).new
       end
     end
     
