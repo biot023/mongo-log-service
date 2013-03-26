@@ -5,16 +5,14 @@ describe LogService do
   let( :conn ) { mock }
   let( :db )   { "the-db" }
   let( :name ) { "log-entries" }
-  let( :size ) { 1048576 }
   let( :processor_descs ) { [ :sql, { :labelled_hash => [ "Parameters" ] } ] }
-  let( :service ) { described_class.new( conn, db, name, size, processor_descs ) }
+  let( :service ) { described_class.new( conn, db, name, processor_descs ) }
 
   describe "construction" do
     subject { service }
     its( :conn ) { should == conn }
     its( :db )   { should == db }
     its( :name ) { should == name }
-    its( :size ) { should == size }
     its( :processor_descs ) { should == processor_descs }
   end
 

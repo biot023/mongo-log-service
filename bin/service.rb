@@ -3,7 +3,6 @@ require_relative "../lib/log_service"
 
 opts = {
   :conn            => "mongodb://localhost",
-  :size            => 1024,
   :processor_descs => []
 }
 
@@ -20,11 +19,6 @@ OptionParser.new do |op|
   op.on( "--name NAME",
          "The name of the service (and the collection to push log records to)" ) do |val|
     opts[:name] = val
-  end
-  op.on( "--size [BYTES]",
-         Integer,
-         "The size of the input buffer table in bytes (default 1024)" ) do |val|
-    opts[:size] = val
   end
   op.on( "--time-processor",
          "Add a creation time field to any records without one" ) do |val|
@@ -53,7 +47,6 @@ begin
   LogService.new( opts[:conn],
                   opts[:db],
                   opts[:name],
-                  opts[:size],
                   opts[:processor_descs] )
     .run
 rescue => err
