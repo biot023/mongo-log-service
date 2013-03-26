@@ -6,14 +6,14 @@ module Services
 
     def run( infinite=true )
       begin
-        cursor = input_collection.find( "message" => { :$exists => true } )
+        cursor = input_collection.safe_do { |c| c.find( "message" => { :$exists => true } ) }
         begin
           doc = cursor.next
           if doc
-            output_collection.insert( _process( doc ), :w => 0 )
-            input_collection.update( { "_id" => doc["_id"] },
-                                     { :$unset => { "message" => true } },
-                                     :w => 0 )
+            output_collection.safe_do { |c| c.insert( _process( doc ), :w => 0 ) }
+            input_collection.safe_do { |c| c.update( { "_id" => doc["_id"] },
+                                                     { :$unset => { "message" => true } },
+                                                     :w => 0 ) }
           else
             sleep( 0.25 ) if infinite
           end

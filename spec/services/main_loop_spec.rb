@@ -20,19 +20,24 @@ describe Services::MainLoop do
     subject { service.run( false ) }
 
     before do
-      input_collection.stub( :find ).and_return( entries )
+      input_collection.stub( :safe_do ).and_return( entries, nil )
       entries.stub( :next ).and_return( *( entries + [ nil ] ) )
       service.stub( :_process ).and_return( *processed_entries )
-      output_collection.stub( :insert )
-      input_collection.stub( :update )
+      output_collection.stub( :safe_do )
     end
 
     it "should get any entries with messages to process from the input collection" do
-      input_collection.should_receive( :find ).with( "message" => { :$exists => true } )
+      koll = mock
+      input_collection.should_receive( :safe_do ).and_yield( koll )
+      koll.should_receive( :find ).with( "message" => { :$exists => true } ).and_return( entries )
+      koll.stub( :update )
       subject
     end
 
     it "should process each entry retrieved" do
+      koll = mock
+      koll.stub( :insert )
+      output_collection.stub( :safe_do ).and_yield( koll )
       [ entries, processed_entries ].transpose.each do |(entry, processed_entry)|
         service.should_receive( :_process ).with( entry ).and_return( processed_entry )
       end
@@ -40,15 +45,21 @@ describe Services::MainLoop do
     end
 
     it "should insert the processed entries to the output collection" do
+      koll = mock
+      output_collection.stub( :safe_do ).and_yield( koll )
       processed_entries.each do |processed_entry|
-        output_collection.should_receive( :insert ).with( processed_entry, :w => 0 )
+        koll.should_receive( :insert ).with( processed_entry, :w => 0 )
       end
       subject
     end
 
     it "should remove the message from the input entries" do
+      koll = mock
+      koll.stub( :find ).and_return( entries )
+      input_collection.stub( :safe_do ).and_yield( koll )
+      input_collection.should_receive( :safe_do ).and_yield( koll )
       entries.each do |entry|
-        input_collection.should_receive( :update )
+        koll.should_receive( :update )
           .with( { "_id" => entry["_id"] },
                  { :$unset => { "message" => true } },
                  :w => 0 )
