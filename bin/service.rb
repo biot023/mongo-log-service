@@ -10,7 +10,7 @@ opts = {
 OptionParser.new do |op|
   op.banner = "Usage: ./service.rb [options]"
   op.on( "--conn [CONNECTION]",
-         "The connection string to the mongodb instance" ) do |val|
+         "The connection string to the mongodb instance (default mongodb://localhost)" ) do |val|
     opts[:conn] = val
   end
   op.on( "--db DB",
@@ -23,7 +23,7 @@ OptionParser.new do |op|
   end
   op.on( "--size [BYTES]",
          Integer,
-         "The size of the input buffer table in bytes" ) do |val|
+         "The size of the input buffer table in bytes (default 1024)" ) do |val|
     opts[:size] = val
   end
   op.on( "--time-processor",
@@ -39,8 +39,12 @@ OptionParser.new do |op|
     opts[:processor_descs] << :labelled_hashes
   end
   op.on( "--rails-controller-processor",
-         "Pulls out rails controller information into record" ) do |val|
+         "Pulls out rails controller information into the main document" ) do |val|
     opts[:processor_descs] << :rails_controller
+  end
+  op.on( "--session-id-processor",
+         "Pulls out session id information into the main document" ) do |val|
+    opts[:processor_descs] << :session_id
   end
 end
   .parse!
@@ -55,12 +59,13 @@ begin
 rescue => err
   dump_to = lambda do |io|
     io << "******** Error in log service!\n"
-    io << err.inspect << "\n"
+    io << "Time: " << Time.now.strftime( "%Y-%m-%d %H:%M:%S" ) << "\n"
+    io << "Error: " << err.class.name << "\n"
     io << "Message: " << err.message << "\n"
     io << "Backtrace:\n"
     io << err.backtrace.join( "\n" ) << "\n\n"
   end
-  File.open( "log/error.log", "w+" ) { |file| dump_to.call( file ) }
+  File.open( "log/error.log", "a" ) { |file| dump_to.call( file ) }
   dump_to.call( STDERR )
   exit( 1 )
 end

@@ -48,7 +48,7 @@ Feature: Logging
     And the rails controller records should have their actions in their own field
     And the rails controller records should have their HTTP verbs in their own field
     And the rails controller records should have their IP addresses in their own field
-@wip
+
   @log @session_id
   Scenario: Logging events with a session id processor
     Given a logging service with a session id processor

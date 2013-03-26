@@ -10,12 +10,16 @@ Given( /^a logging service with a hashes processor$/ ) do
   run_service( :hashes_processor )
 end
 
-Given(/^a logging service with a labelled hash processor$/) do
+Given( /^a logging service with a labelled hash processor$/ ) do
   run_service( :labelled_hashes_processor )
 end
 
 Given( /^a logging service with a rails controller processor$/ ) do
   run_service( :rails_controller_processor )
+end
+
+Given( /^a logging service with a session id processor$/ ) do
+  run_service( :session_id_processor )
 end
 
 When( /^I send events to the service$/ ) do
@@ -146,5 +150,16 @@ Then( /^the rails controller records should have their IP addresses in their own
   }.each do |index, ip_address|
     @processed[index]["ip_address"].should == ip_address
     @processed[index]["message"].should_not match( /##{ ip_address }/ )
+  end
+end
+
+Then( /^the records with session ids should have them in their own field$/ ) do
+  { 7 => "b298650560db8de031b590eeacb00511",
+    8 => "b14fb89ab48b9f144b76faa0402219a4",
+    9 => "cd02b9d27ebaa801c289791c47bfb524"
+  }.each do |index, session_id|
+    @processed[index]["session_id"].should == session_id
+    @processed[index]["message"].should_not match( /Session ID:/ )
+    @processed[index]["message"].should_not match( /##{ session_id }/ )
   end
 end
