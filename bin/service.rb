@@ -45,9 +45,22 @@ OptionParser.new do |op|
 end
   .parse!
 
-LogService.new( opts[:conn],
-                opts[:db],
-                opts[:name],
-                opts[:size],
-                opts[:processor_descs] )
-  .run
+begin
+  LogService.new( opts[:conn],
+                  opts[:db],
+                  opts[:name],
+                  opts[:size],
+                  opts[:processor_descs] )
+    .run
+rescue => err
+  dump_to = lambda do |io|
+    io << "******** Error in log service!\n"
+    io << err.inspect << "\n"
+    io << "Message: " << err.message << "\n"
+    io << "Backtrace:\n"
+    io << err.backtrace.join( "\n" ) << "\n\n"
+  end
+  File.open( "log/error.log", "w+" ) { |file| dump_to.call( file ) }
+  dump_to.call( STDERR )
+  exit( 1 )
+end
