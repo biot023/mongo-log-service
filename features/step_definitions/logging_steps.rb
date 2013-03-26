@@ -6,6 +6,10 @@ Given( /^a logging service with a time processor$/ ) do
   run_service( :time_processor )
 end
 
+Given( /^a logging service with a ruby\-safe processor$/ ) do
+  run_service( :ruby_safe_processor )
+end
+
 Given( /^a logging service with a hashes processor$/ ) do
   run_service( :hashes_processor )
 end
@@ -24,6 +28,10 @@ end
 
 When( /^I send events to the service$/ ) do
   @sent, @processed = send_log_events
+end
+
+When(/^I send events with ruby objects in them to the service$/) do
+  @sent, @processed = send_log_events( :with_ruby_objects )
 end
 
 Then( /^I should see processed records in the database$/ ) do
@@ -162,4 +170,8 @@ Then( /^the records with session ids should have them in their own field$/ ) do
     @processed[index]["message"].should_not match( /Session ID:/ )
     @processed[index]["message"].should_not match( /##{ session_id }/ )
   end
+end
+
+Then( /^any ruby objects should have been safely quoted$/ ) do
+  # Would have thrown an error if they hadn't
 end

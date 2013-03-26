@@ -5,11 +5,12 @@ Build example:
 $ mongo my_log --eval "var name='log_entries', size=1024, ttl=86400" db/build.js
 
 Call example:
-$ bundle exec bin/service.rb --conn mongodb://localhost   \
-                             --db my_log                  \
-                             --name log_entries           \
-                             --time-processor             \
-                             --rails-controller-processor \
-                             --session-id-processor       \
-                             --labelled-hashes-processor  \
-                             --hashes-processor
+$ bundle exec ruby bin/service.rb --conn mongodb://localhost   \
+                                  --db my_log                  \
+                                  --name log_entries           \
+                                  --ruby-safe-processor        \
+                                  --time-processor             \
+                                  --rails-controller-processor \
+                                  --session-id-processor       \
+                                  --labelled-hashes-processor  \
+                                  --hashes-processor

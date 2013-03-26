@@ -1,4 +1,5 @@
 require_relative "processor/time"
+require_relative "processor/ruby_safe"
 require_relative "processor/hashes"
 require_relative "processor/labelled_hashes"
 require_relative "processor/rails_controller"

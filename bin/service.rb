@@ -24,6 +24,10 @@ OptionParser.new do |op|
          "Add a creation time field to any records without one" ) do |val|
     opts[:processor_descs] << :time
   end
+  op.on( "--ruby-safe-processor",
+         "Quotes any ruby objects in message to make them safe for extraction" ) do |val|
+    opts[:processor_descs] << :ruby_safe
+  end
   op.on( "--hashes-processor",
          "Pulls out key/value pairs into the body of the main document" ) do |val|
     opts[:processor_descs] << :hashes

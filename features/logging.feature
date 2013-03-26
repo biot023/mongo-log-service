@@ -19,6 +19,13 @@ Feature: Logging
     And records with original time values should keep those
     And records without original time values should be given them
 
+  @log @ruby_safe
+  Scenario: Logging events with a ruby-safe processor
+    Given a logging service with a ruby-safe processor
+    When I send events with ruby objects in them to the service
+    Then I should see processed records in the database
+    And any ruby objects should have been safely quoted
+
   @log @unlabelled @hash
   Scenario: Logging events with a hashes processor
     Given a logging service with a hashes processor

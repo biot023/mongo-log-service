@@ -21,7 +21,17 @@ module EventsHelper
              "message" => "Processing IpnsController#paypal_ipn (for 173.0.81.1 at 2013-03-25 23:00:46) [POST]\nSession ID: cd02b9d27ebaa801c289791c47bfb524" }
          ]
 
-  def send_log_events( data=DATA )
+  ROBJ_DATA = [ { "server" => "alienhost", "level" => "error", "type" => "Ruby Object",
+                  "message" => "REQUESTING PAGE: POST /themes with {\"theme\"=>{\"link2_text\"=>\"\", \"name\"=>\"Valentine Gifts\", \"link2\"=>\"\", \"slug\"=>\"valentine_gifts\", \"pinterest_link\"=>\"\", \"introduction\"=>\"\", \"theme_image\"=>{\"uploaded_data\"=>#<ActionController::TestUploadedFile:0x10a268be8 @original_filename=\"square4.png\", @tempfile=#<File:/var/folders/__/b7bshk5x21x79gg7rwr7dxdh0000gn/T/square49087-0.png>, @content_type=\"image/png\">}, \"curator_username\"=>\"\", \"link\"=>\"\", \"curated_by\"=>\"\", \"link_text\"=>\"\"}, \"commit\"=>\"Create theme\"} and HTTP headers {\"HTTP_REFERER\"=>\"/themes/new\"}" }
+              ]
+
+  def send_log_events( type=:data )
+    data = case type
+           when :with_ruby_objects
+             DATA + ROBJ_DATA
+           else
+             DATA
+           end
     load_id = rand( 1000000 )
     initial_count = ocoll.count
     subsequent_count = initial_count + data.size
