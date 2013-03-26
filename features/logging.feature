@@ -37,7 +37,7 @@ Feature: Logging
     And the records' messages should still have their unlabelled hashes
     And the records should have their labelled hashes extracted to labelled sub-hashes
     And the extracted labelled hashes should no longer be in the records' messages
-@wip
+
   @log @sql
   Scenario: Logging events with a rails controller processor
     Given a logging service with a rails controller processor
@@ -48,7 +48,7 @@ Feature: Logging
     And the rails controller records should have their actions in their own field
     And the rails controller records should have their HTTP verbs in their own field
     And the rails controller records should have their IP addresses in their own field
-
+@wip
   @log @session_id
   Scenario: Logging events with a session id processor
     Given a logging service with a session id processor
