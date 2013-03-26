@@ -1,1 +1,12 @@
-TODO -- fill all this balls in.
+Processes log entries from an input mongo collection (typically a capped collection) into
+a normal collection (possibly with an automatic expiry on the records -- see db/build.js).
+
+Call example:
+$ bundle exec bin/service.rb --conn mongodb://localhost   \
+                             --db my_log                  \
+                             --name log_entries           \
+                             --time-processor             \
+                             --rails-controller-processor \
+                             --session-id-processor       \
+                             --labelled-hashes-processor  \
+                             --hashes-processor
