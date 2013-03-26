@@ -31,6 +31,16 @@ module B23
         @collection
       end
       alias_method( :__getobj__, :collection )
+
+      def safe_do( &block )
+        block.call( @collection || collection )
+      rescue Mongo::MongoRubyError
+        retries ||= 0
+        retries += 1
+        @collection = nil
+        retry if retries < 2
+        raise
+      end
     end
     
   end

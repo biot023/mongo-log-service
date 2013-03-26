@@ -278,5 +278,82 @@ describe B23::MongoExt::ActiveCollection do
       end
     end
   end
+
+  describe "safely performing operations on the collection" do
+    let( :op ) { lambda { |koll| koll.find( "_id" => "abc123" ) } }
+    subject { coll.safe_do( &op ) }
+
+    context "when the collection has not been memoised" do
+      let( :new_collection ) { mock }
+      let( :findresult )     { mock }
+
+      before do
+        coll.stub( :collection ).and_return( new_collection )
+        new_collection.stub( :find ).and_return( findresult )
+      end
+
+      it "should get the new collection" do
+        coll.should_receive( :collection )
+        subject
+      end
+
+      it "should perform the operation with the new collection" do
+        new_collection.should_receive( :find )
+        subject.should == findresult
+      end
+    end
+
+    context "when the collection has been memoised, but there is an issue with it" do
+      let( :old_collection ) { mock }
+      let( :new_collection ) { mock }
+      let( :findresult )     { mock }
+
+      before do
+        old_collection.stub( :find ).and_raise( Mongo::ConnectionError )
+        coll.instance_variable_set( :@collection, old_collection )
+        coll.stub( :collection ).and_return( new_collection )
+        new_collection.stub( :find ).and_return( findresult )
+      end
+
+      it "should get the new collection" do
+        coll.should_receive( :collection )
+        subject
+      end
+
+      it "should perform the operation with the new collection" do
+        new_collection.should_receive( :find )
+        subject.should == findresult
+      end
+    end
+
+    context "when the collection has been memoised, but there is a persistent issue with it" do
+      let( :collection ) { mock }
+
+      before do
+        collection.stub( :find ).and_raise( Mongo::ConnectionError )
+        coll.instance_variable_set( :@collection, collection )
+        coll.stub( :collection ).and_return( collection )
+      end
+
+      it "should raise the error" do
+        expect { subject }.to raise_error( Mongo::ConnectionError )
+      end
+    end
+
+    context "when the collection has been memoised, and it is ready to work" do
+      let( :collection ) { mock( :memoised ) }
+      let( :findresult ) { mock }
+
+      before do
+        collection.stub( :find ).and_return( findresult )
+        coll.instance_variable_set( :@collection, collection )
+      end
+
+      it "should perform the operation with the memoised collection" do
+        collection.should_receive( :find )
+        subject.should == findresult
+      end
+    end
+  end
   
 end
