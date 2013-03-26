@@ -1,4 +1,4 @@
-require_relative "../../lib/b23/mongo_ext/active_collection"
+require "b23/mongo_ext"
 
 def service_dbname
   @@service_dbname ||= "log_service_cuke"

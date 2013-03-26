@@ -1,4 +1,4 @@
-require_relative "b23/mongo_ext/active_collection"
+require "b23/mongo_ext"
 require_relative "services/processor"
 require_relative "services/main_loop"
 

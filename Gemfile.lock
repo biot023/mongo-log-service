@@ -1,3 +1,11 @@
+GIT
+  remote: git@github.com:biot023/mongo_ext.git
+  revision: ca08617b39b6c6165251ba435adfb0f67f60cd2d
+  specs:
+    mongo_ext (0.0.1)
+      bson_ext
+      mongo
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -34,5 +42,6 @@ DEPENDENCIES
   bson_ext
   cucumber
   mongo
+  mongo_ext!
   rspec
   timecop
