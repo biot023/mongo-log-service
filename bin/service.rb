@@ -99,7 +99,7 @@ else
     io << "******** Error starting log service!\n"
     io << "Unhandled command: #{ commend.inspect }\n"
     io << "Usage is:\n"
-    io << "$ ruby service.rb <start|stop|restart> <switches>"
+    io << "$ ruby service.rb <start|stop|restart> --name NAME <switches>"
     io << "See --help for more information."
   end
   exit( 1 )
