@@ -9,20 +9,16 @@ opts = {
 
 OptionParser.new do |op|
   op.banner = "Usage: ./service.rb <start|stop|restart> [options]"
-  op.on( "--pidfile FNAME",
-         "The location of the PID file to track whether I'm running or not" ) do |val|
-    pidfile = val
-  end
   op.on( "--conn [CONNECTION]",
          "The connection string to the mongodb instance (default mongodb://localhost)" ) do |val|
     opts[:conn] = val
   end
   op.on( "--db [DB]",
-         "The database to push log records to" ) do |val|
+         "The database to push log records to (required to start service)" ) do |val|
     opts[:db] = val
   end
   op.on( "--name NAME",
-         "The name of the service (and the collection to push log records to)" ) do |val|
+         "The name of the service (& collection to push log records to & pidfile)" ) do |val|
     opts[:name] = val
   end
   op.on( "--time-processor",
