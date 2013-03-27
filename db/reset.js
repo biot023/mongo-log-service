@@ -1,8 +1,8 @@
-// mongo <dbname> --eval "var name='cuke_entries', size=1024, ttl=86400" build.js
+// mongo <dbname> --eval "var name='cuke_entries', size=1024, ttl=604800" build.js
 
 var localName = typeof name === 'undefined' ? "events" : name;
 var localSize = typeof size === 'undefined' ? 16384 : size;
-var localTtl = typeof ttl === 'undefined' ? 604800 : ttl;
+var localTtl = typeof ttl === 'undefined' ? 86400 : ttl;
 var inputName = "input_" + localName;
 var delName = "del_" + inputName;
 
