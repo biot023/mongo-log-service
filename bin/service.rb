@@ -1,4 +1,5 @@
 require "optparse"
+require "fileutils"
 require_relative "../lib/log_service"
 
 opts = {
@@ -7,12 +8,16 @@ opts = {
 }
 
 OptionParser.new do |op|
-  op.banner = "Usage: ./service.rb [options]"
+  op.banner = "Usage: ./service.rb <start|stop|restart> [options]"
+  op.on( "--pidfile FNAME",
+         "The location of the PID file to track whether I'm running or not" ) do |val|
+    pidfile = val
+  end
   op.on( "--conn [CONNECTION]",
          "The connection string to the mongodb instance (default mongodb://localhost)" ) do |val|
     opts[:conn] = val
   end
-  op.on( "--db DB",
+  op.on( "--db [DB]",
          "The database to push log records to" ) do |val|
     opts[:db] = val
   end
@@ -47,14 +52,24 @@ OptionParser.new do |op|
 end
   .parse!
 
-begin
+pidfile = "pids/#{ opts[:name] }.pid"
+command = ARGV[0]
+
+def _dump_error( &block )
+  File.open( "log/error.log", "a" ) { |file| block.call( file ) }
+  block.call( STDERR )
+end
+
+def _start( opts, pidfile )
+  raise( "Pidfile #{ pidfile } already exists for log service!" ) if File.exists?( pidfile )
+  File.open( pidfile, "w" ) { |file| file << $$ }
   LogService.new( opts[:conn],
                   opts[:db],
                   opts[:name],
                   opts[:processor_descs] )
     .run
 rescue => err
-  dump_to = lambda do |io|
+  _dump_error do |io|
     io << "******** Error in log service!\n"
     io << "Time: " << Time.now.strftime( "%Y-%m-%d %H:%M:%S" ) << "\n"
     io << "Error: " << err.class.name << "\n"
@@ -62,7 +77,31 @@ rescue => err
     io << "Backtrace:\n"
     io << err.backtrace.join( "\n" ) << "\n\n"
   end
-  File.open( "log/error.log", "a" ) { |file| dump_to.call( file ) }
-  dump_to.call( STDERR )
   exit( 1 )
 end
+
+def _stop( pidfile )
+  pid = File.read( pidfile ).strip
+  `kill #{ pid }`
+  FileUtils.rm_f( pidfile )
+end
+
+case command
+when "start"
+  _start( opts, pidfile )
+when "stop"
+  _stop( pidfile )
+when "restart"
+  _stop( pidfile )
+  _start( opts, pidfile )
+else
+  _dump_error do |io|
+    io << "******** Error starting log service!\n"
+    io << "Unhandled command: #{ commend.inspect }\n"
+    io << "Usage is:\n"
+    io << "$ ruby service.rb <start|stop|restart> <switches>"
+    io << "See --help for more information."
+  end
+  exit( 1 )
+end
+
