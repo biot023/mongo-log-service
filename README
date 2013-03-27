@@ -1,5 +1,6 @@
-Processes log entries from an input mongo collection (typically a capped collection) into
-a normal collection (possibly with an automatic expiry on the records -- see db/build.js).
+Processes log entries from an input mongo collection (typically a capped
+collection) into a normal collection (possibly with an automatic expiry
+on the records -- see db/build.js).
 
 Build example:
 $ mongo my_log --eval "var name='events', size=1024, ttl=86400" db/build.js
