@@ -37,6 +37,7 @@ module ServiceHelper
         if @_service
           puts "bundle exec ruby bin/service.rb stop --name #{ @_service.name }"
           puts `bundle exec ruby bin/service.rb stop --name #{ @_service.name }`
+          @_service.process.close
           @_service = nil
         end
       end
