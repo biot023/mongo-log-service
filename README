@@ -4,13 +4,27 @@ a normal collection (possibly with an automatic expiry on the records -- see db/
 Build example:
 $ mongo my_log --eval "var name='events', size=1024, ttl=86400" db/build.js
 
-Call example:
-$ bundle exec ruby bin/service.rb --conn mongodb://localhost   \
-                                  --db my_log                  \
-                                  --name events                \
-                                  --ruby-safe-processor        \
-                                  --time-processor             \
-                                  --rails-controller-processor \
-                                  --session-id-processor       \
-                                  --labelled-hashes-processor  \
-                                  --hashes-processor
+Start call example:
+$ bundle exec ruby bin/service.rb start --conn mongodb://localhost   \
+                                        --db my_log                  \
+                                        --name events                \
+                                        --ruby-safe-processor        \
+                                        --time-processor             \
+                                        --rails-controller-processor \
+                                        --session-id-processor       \
+                                        --labelled-hashes-processor  \
+                                        --hashes-processor
+
+Stop call example:
+$ bundle exec ruby bin/service.rb stop --name events
+
+Restart call example:
+$ bundle exec ruby bin/service.rb restart --conn mongodb://localhost   \
+                                          --db my_log                  \
+                                          --name events                \
+                                          --ruby-safe-processor        \
+                                          --time-processor             \
+                                          --rails-controller-processor \
+                                          --session-id-processor       \
+                                          --labelled-hashes-processor  \
+                                          --hashes-processor
