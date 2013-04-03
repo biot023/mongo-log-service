@@ -9,11 +9,11 @@ opts = {
 
 OptionParser.new do |op|
   op.banner = "Usage: ./service.rb <start|stop|restart> [options]"
-  op.on( "--conn [CONNECTION]",
+  op.on( "--conn CONNECTION",
          "The connection string to the mongodb instance (default mongodb://localhost)" ) do |val|
     opts[:conn] = val
   end
-  op.on( "--db [DB]",
+  op.on( "--db DB",
          "The database to push log records to (required to start service)" ) do |val|
     opts[:db] = val
   end
